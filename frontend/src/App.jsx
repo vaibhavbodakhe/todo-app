@@ -3,6 +3,8 @@ import { FaClock } from "react-icons/fa";
 import confetti from "canvas-confetti";
 import "./App.css";
 
+const API_URL = "https://todo-app-xj50.onrender.com"; // ✅ Your backend URL
+
 function App() {
   const gradients = [
     "linear-gradient(135deg, #f9f871, #f6d365, #fda085)",
@@ -13,8 +15,6 @@ function App() {
     "linear-gradient(135deg, #fddb92, #d1fdff)",
   ];
 
-  const API_URL = "https://your-backend.onrender.com/todos"; // 🔥 change this to your Render backend URL
-
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState("");
   const [time, setTime] = useState("");
@@ -22,9 +22,19 @@ function App() {
   const [editingTodo, setEditingTodo] = useState(null);
   const [bg, setBg] = useState(gradients[0]);
 
+  // ✅ Load todos from backend
+  useEffect(() => {
+    fetch(`${API_URL}/todos`)
+      .then(res => res.json())
+      .then(data => setTodos(data))
+      .catch(err => console.error("❌ Failed to fetch todos:", err));
+  }, []);
+
   // 🎤 Speak function
   const speak = (text) => {
     const utter = new SpeechSynthesisUtterance(text);
+    utter.pitch = 1;
+    utter.rate = 1;
     window.speechSynthesis.speak(utter);
   };
 
@@ -37,80 +47,64 @@ function App() {
     audio.play();
   };
 
-  // ✅ Fetch all todos from backend
-  useEffect(() => {
-    fetch(API_URL)
-      .then((res) => res.json())
-      .then((data) => setTodos(data))
-      .catch((err) => console.error("Error fetching todos:", err));
-  }, []);
-
-  // ✅ Add or Update Todo
+  // ✅ Add or Update Todo via backend
   const handleAddOrUpdateTodo = async () => {
     if (!newTodo.trim() || !time) return;
 
     if (editingTodo) {
-      // update
-      const res = await fetch(`${API_URL}/${editingTodo._id}`, {
+      const res = await fetch(`${API_URL}/todos/${editingTodo._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ task: newTodo, time }),
       });
-      const updated = await res.json();
-      setTodos(todos.map((t) => (t._id === updated._id ? updated : t)));
+      const updatedTodo = await res.json();
+      setTodos(todos.map(t => t._id === updatedTodo._id ? updatedTodo : t));
       setEditingTodo(null);
       speak("Todo updated!");
+      playSound("success");
     } else {
-      // add new
-      const newTask = {
-        task: newTodo,
-        time,
-        color: gradients[Math.floor(Math.random() * gradients.length)],
-      };
-      const res = await fetch(API_URL, {
+      const res = await fetch(`${API_URL}/todos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTask),
+        body: JSON.stringify({ task: newTodo, time }),
       });
-      const saved = await res.json();
-      setTodos([...todos, saved]);
+      const newTask = await res.json();
+      setTodos([...todos, newTask]);
       speak(`Todo added: ${newTodo}`);
+      playSound("success");
     }
 
     setNewTodo("");
     setTime("");
-    playSound("success");
   };
 
-  // ✅ Delete Todo
+  // ✅ Delete Todo via backend
   const handleDelete = async (id) => {
-    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    await fetch(`${API_URL}/todos/${id}`, { method: "DELETE" });
     setTodos(todos.filter((t) => t._id !== id));
+    speak("Todo deleted");
     playSound("delete");
   };
 
   // ✅ Edit Todo
   const handleEdit = (todo) => {
     setNewTodo(todo.task);
-    setTime(todo.time);
+    setTime(todo.time ? new Date(todo.time).toISOString().slice(0, 16) : "");
     setEditingTodo(todo);
   };
 
   // ✅ Toggle Complete
   const handleComplete = async (id) => {
     const todo = todos.find((t) => t._id === id);
-    const updated = { ...todo, completed: !todo.completed };
-
-    const res = await fetch(`${API_URL}/${id}`, {
+    const res = await fetch(`${API_URL}/todos/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
+      body: JSON.stringify({ completed: !todo.completed }),
     });
+    const updatedTodo = await res.json();
+    setTodos(todos.map((t) => (t._id === id ? updatedTodo : t)));
 
-    const saved = await res.json();
-    setTodos(todos.map((t) => (t._id === saved._id ? saved : t)));
-
-    if (updated.completed) {
+    if (!todo.completed) {
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       setBg(gradients[Math.floor(Math.random() * gradients.length)]);
       speak(`Congratulations! You completed ${todo.task}`);
@@ -179,12 +173,8 @@ function App() {
                 <button className="complete-btn" onClick={() => handleComplete(todo._id)}>
                   {todo.completed ? "✅ Undo" : "✔️ Done"}
                 </button>
-                <button className="edit-btn" onClick={() => handleEdit(todo)}>
-                  ✏️
-                </button>
-                <button className="delete-btn" onClick={() => handleDelete(todo._id)}>
-                  ❌
-                </button>
+                <button className="edit-btn" onClick={() => handleEdit(todo)}>✏️</button>
+                <button className="delete-btn" onClick={() => handleDelete(todo._id)}>❌</button>
               </div>
             </li>
           ))}
