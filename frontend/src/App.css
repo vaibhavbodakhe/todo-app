@@ -1,0 +1,178 @@
+/* App container */
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px;
+  transition: background 1s ease-in-out;
+}
+
+.app-container {
+  background: #ffffffdd;
+  padding: 25px;
+  border-radius: 20px;
+  width: 500px;
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.2);
+}
+
+.app-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clock-icon {
+  margin-right: 10px;
+  color: #ff9800;
+}
+
+/* Search bar */
+.search {
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Add section */
+.add-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.add-input,
+.time-input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+.add-btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 12px;
+  background: #4caf50;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.add-btn:hover {
+  background: #43a047;
+}
+
+/* Todo list */
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-item {
+  background: #eee;
+  margin-bottom: 12px;
+  padding: 15px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #333;
+  transition: transform 0.3s;
+}
+
+.todo-item:hover {
+  transform: scale(1.02);
+}
+
+.todo-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.todo-time {
+  display: block;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  color: #444;
+}
+
+/* Completed task style */
+.todo-item.completed .todo-text {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.todo-item.completed {
+  transform: scale(0.97);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Buttons */
+.edit-btn,
+.delete-btn,
+.complete-btn {
+  border: none;
+  margin-left: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+
+.complete-btn {
+  background: #2196f3;
+  color: white;
+}
+.complete-btn:hover {
+  background: #1976d2;
+}
+
+.edit-btn {
+  background: #ffc107;
+}
+.edit-btn:hover {
+  background: #e0a800;
+}
+
+.delete-btn {
+  background: #f44336;
+  color: white;
+}
+.delete-btn:hover {
+  background: #d32f2f;
+}
+/* Full-screen wrapper */
+.app-wrapper {
+  height: 100vh;           /* Full screen height */
+  width: 100vw;            /* Full screen width */
+  display: flex;           /* Flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  align-items: center;     /* Center vertically */
+  background: linear-gradient(135deg, #f9f871, #f6d365, #fda085);
+  transition: background 0.6s ease;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Centered card */
+.app-container {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+}
