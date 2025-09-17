@@ -14,9 +14,10 @@ app.use(cors());
 app.use(express.json());
 
 // Connect MongoDB
-mongoose.connect(process.env.MONGO_URI)
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
-  .catch(err => console.error("❌ MongoDB connection error:", err));
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 // Routes
 app.get("/todos", async (req, res) => {
@@ -40,7 +41,11 @@ app.post("/todos", async (req, res) => {
 
 app.put("/todos/:id", async (req, res) => {
   try {
-    const updatedTodo = await Todo.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedTodo = await Todo.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
     res.json(updatedTodo);
   } catch (err) {
     res.status(500).json({ error: "Failed to update todo" });
@@ -56,7 +61,7 @@ app.delete("/todos/:id", async (req, res) => {
   }
 });
 
-// Serve frontend (if needed for deployment)
+// Serve frontend (for deployment)
 const frontendPath = path.join(__dirname, "..", "frontend", "dist");
 app.use(express.static(frontendPath));
 
@@ -64,7 +69,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"));
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+// ✅ Start server (important for Render)
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
